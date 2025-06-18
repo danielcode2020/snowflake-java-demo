@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: snowflake-java
+snowflake:
+  username: YOUR_USERNAME
+  account-identifier: YOUR_ACCOUNT_ID
+  password: YOUR_PASSWORD
+  warehouse: YOUR_WAREHOUSE
+  db: YOUR_DB
+  schema: YOUR_SCHEMA

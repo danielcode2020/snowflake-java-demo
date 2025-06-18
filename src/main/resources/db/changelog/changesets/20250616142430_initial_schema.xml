@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1" author="daniel-amd">
+
+        <createTable tableName="user">
+            <column name="id" type="bigserial">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="login" type="varchar(50)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="authority">
+            <column name="name" type="varchar(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="user_authority">
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="authority_name" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="authority_name"
+                                 baseTableName="user_authority"
+                                 constraintName="fk_authority_name"
+                                 referencedColumnNames="name"
+                                 referencedTableName="authority"/>
+
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="user_authority"
+                                 constraintName="fk_user_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="user"/>
+
+        <loadData
+                file="db/changelog/data/authority.csv"
+                separator=";"
+                tableName="authority"
+                usePreparedStatements="true">
+            <column name="name" type="string"/>
+        </loadData>
+        <loadData
+                file="db/changelog/data/user.csv"
+                separator=";"
+                tableName="user"
+                usePreparedStatements="true">
+            <column name="id" type="numeric"/>
+            <column name="login" type="varchar"/>
+        </loadData>
+        <loadData
+                file="db/changelog/data/user_authority.csv"
+                separator=";"
+                tableName="user_authority"
+                usePreparedStatements="true">
+            <column name="user_id" type="numeric"/>
+        </loadData>
+
+    </changeSet>
+
+</databaseChangeLog>
