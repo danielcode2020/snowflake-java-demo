@@ -5,4 +5,5 @@
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
    <include file="/db/changelog/changesets/20250616142430_initial_schema.xml" relativeToChangelogFile="false"/>
+   <include file="/db/changelog/changesets/20250709104930_create_stored_procedures.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

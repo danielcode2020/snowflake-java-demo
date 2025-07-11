@@ -8,3 +8,6 @@ snowflake:
   warehouse: YOUR_WAREHOUSE
   db: YOUR_DB
   schema: YOUR_SCHEMA
+logging:
+  level:
+    com.snowflake.snowpark_java: INFO
