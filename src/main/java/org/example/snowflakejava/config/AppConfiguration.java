@@ -1,5 +1,6 @@
 package org.example.snowflakejava.config;
 
+import com.snowflake.snowpark_java.Session;
 import com.zaxxer.hikari.HikariDataSource;
 import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -10,6 +11,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 public class AppConfiguration {
@@ -38,6 +41,18 @@ public class AppConfiguration {
         hikariObj.setLoginTimeout(30000);
         hikariObj.setIdleTimeout(10000);
         return hikariObj;
+    }
+
+    @Bean
+    public Session snowflakeSession(SnowflakeProperties snowflakeProperties) {
+        Map<String, String> properties = new HashMap<>();
+        properties.put("URL", "https://%s.snowflakecomputing.com:443".formatted(snowflakeProperties.accountIdentifier()));
+        properties.put("USER", snowflakeProperties.username());
+        properties.put("PASSWORD", snowflakeProperties.password());
+        properties.put("WAREHOUSE", snowflakeProperties.warehouse());
+        properties.put("DB", snowflakeProperties.db());
+        properties.put("SCHEMA", snowflakeProperties.schema());
+        return Session.builder().configs(properties).create();
     }
 
     /*

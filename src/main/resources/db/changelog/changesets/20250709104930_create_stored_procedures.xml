@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1" author="daniel-amd">
+        <createTable tableName="USER_REQUESTS">
+            <column name="REQUEST_ID" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="REASON" type="VARCHAR(255)"/>
+            <column name="ALLOCATION_PERIOD_TYPE" type="VARCHAR(50)"/>
+            <column name="SOURCE_ID_YEARS" type="ARRAY"/>
+            <column name="MONTHS" type="ARRAY"/>
+            <column name="CREATED_AT" type="TIMESTAMP_LTZ"/>
+            <column name="UPDATED_AT" type="TIMESTAMP_LTZ"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="daniel-amd" runOnChange="true">
+        <createProcedure procedureName="CREATE_USER_REQUEST_V1">
+            CREATE OR REPLACE PROCEDURE CREATE_USER_REQUEST_V1(
+                REASON VARCHAR,
+                ALLOCATION_PERIOD_TYPE VARCHAR,
+                SOURCE_ID_YEARS VARCHAR,
+                MONTHS VARCHAR
+            )
+            RETURNS VARCHAR
+            LANGUAGE SQL
+            AS
+            $$
+            DECLARE
+            v_request_id VARCHAR;
+            BEGIN
+                v_request_id := UUID_STRING();
+
+            INSERT INTO USER_REQUESTS (
+                REQUEST_ID,
+                REASON,
+                ALLOCATION_PERIOD_TYPE,
+                SOURCE_ID_YEARS,
+                MONTHS,
+                CREATED_AT
+            ) select
+                         :v_request_id,
+                         :REASON,
+                         :ALLOCATION_PERIOD_TYPE,
+                         PARSE_JSON(:SOURCE_ID_YEARS),
+                         PARSE_JSON(:MONTHS),
+                         CURRENT_TIMESTAMP();
+
+            RETURN v_request_id;
+            END;
+            $$
+        </createProcedure>
+    </changeSet>
+
+    <changeSet id="3" author="daniel-amd" runOnChange="true">
+        <createProcedure procedureName="UPDATE_USER_REQUEST">
+            CREATE OR REPLACE PROCEDURE UPDATE_USER_REQUEST(
+                USER_REQUEST_ID VARCHAR,
+                ADDED_SOURCE_ID_YEARS ARRAY
+            )
+            RETURNS BOOLEAN
+            LANGUAGE SQL
+            AS
+            $$
+            BEGIN
+            UPDATE USER_REQUESTS
+            SET
+                SOURCE_ID_YEARS = ARRAY_APPEND_ALL(SOURCE_ID_YEARS, :ADDED_SOURCE_ID_YEARS),
+                UPDATED_AT = CURRENT_TIMESTAMP()
+            WHERE REQUEST_ID = :USER_REQUEST_ID;
+            RETURN TRUE;
+            END;
+            $$
+        </createProcedure>
+    </changeSet>
+
+    <changeSet id="4" author="daniel-amd" runOnChange="true">
+        <createProcedure procedureName="DELETE_USER_REQUEST">
+            CREATE OR REPLACE PROCEDURE DELETE_USER_REQUEST(
+                USER_REQUEST_ID VARCHAR
+            )
+            RETURNS BOOLEAN
+            LANGUAGE SQL
+            AS
+            $$
+            BEGIN
+            DELETE FROM USER_REQUESTS WHERE REQUEST_ID = :USER_REQUEST_ID;
+            RETURN TRUE;
+            END;
+            $$
+        </createProcedure>
+    </changeSet>
+
+    <changeSet id="5" author="daniel-amd" runOnChange="true">
+        <createProcedure procedureName="CALL_STRING">
+            CREATE OR REPLACE PROCEDURE CALL_STRING(
+                USER_REQUEST_ID VARCHAR
+            )
+            RETURNS VARCHAR
+            LANGUAGE SQL
+            AS
+            $$
+            DECLARE
+                v_request_id VARCHAR;
+            BEGIN
+                v_request_id := UUID_STRING();
+            RETURN v_request_id;
+            END;
+            $$
+        </createProcedure>
+    </changeSet>
+
+    <changeSet id="6" author="daniel-amd" runOnChange="true">
+        <createProcedure procedureName="CALL_INT_ARRAY">
+            CREATE OR REPLACE PROCEDURE CALL_INT_ARRAY(
+                INT_ARRAY ARRAY
+            )
+            RETURNS VARCHAR
+            LANGUAGE SQL
+            AS
+            $$
+            DECLARE
+            v_request_id VARCHAR;
+            BEGIN
+                v_request_id := UUID_STRING();
+            RETURN v_request_id;
+            END;
+            $$
+        </createProcedure>
+    </changeSet>
+
+    <changeSet id="7" author="daniel-amd">
+        <createProcedure procedureName="CALL_INT">
+            create procedure CALL_INT(MONEY NUMBER)
+                returns VARCHAR
+                language SQL
+                strict
+            as
+            $$DECLARE
+                            v_request_id VARCHAR;
+            --  Sql error code should be between -20999 and -20000
+                        my_exception EXCEPTION (-20002, 'CUSTOM_EXCEPTION');
+                        BEGIN
+                IF (MONEY=1) THEN
+                    RAISE my_exception;
+                        END IF;
+                v_request_id := UUID_STRING();
+                        RETURN v_request_id;
+                        END;
+            $$;
+        </createProcedure>
+    </changeSet>
+
+
+
+</databaseChangeLog>
