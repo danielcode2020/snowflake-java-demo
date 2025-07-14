@@ -6,6 +6,7 @@ import com.snowflake.snowpark_java.DataFrame;
 import com.snowflake.snowpark_java.Row;
 import com.snowflake.snowpark_java.Session;
 import lombok.extern.slf4j.Slf4j;
+import net.snowflake.client.jdbc.SnowflakeSQLException;
 import org.example.snowflakejava.controller.dto.SourceAndYearDto;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -38,6 +39,22 @@ public class UserRequestRepository {
         DataFrame dataFrame = snowflakeSession.storedProcedure("PUBLIC.CALL_STRING", value);
         Row row = dataFrame.collect()[0];
         return UUID.fromString(row.getAs(0,String.class));
+    }
+
+    public UUID callInt(int value){
+        try {
+            return getUuid(value);
+        } catch (SnowflakeSQLException e){
+            System.err.println(e.getErrorCode());  // --20002
+            System.err.println(e.getMessage());   //  Uncaught exception of type 'MY_EXCEPTION' on line 6 at position 8 : CUSTOM_EXCEPTION
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    private UUID getUuid(int value) throws SnowflakeSQLException{
+        DataFrame dataFrame = snowflakeSession.storedProcedure("PUBLIC.CALL_INT", value);
+        Row row = dataFrame.collect()[0];
+        return UUID.fromString(row.getAs(0, String.class));
     }
 
 

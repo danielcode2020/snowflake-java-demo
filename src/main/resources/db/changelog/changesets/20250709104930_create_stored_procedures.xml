@@ -134,6 +134,28 @@
         </createProcedure>
     </changeSet>
 
+    <changeSet id="7" author="daniel-amd">
+        <createProcedure procedureName="CALL_INT">
+            create procedure CALL_INT(MONEY NUMBER)
+                returns VARCHAR
+                language SQL
+                strict
+            as
+            $$DECLARE
+                            v_request_id VARCHAR;
+            --  Sql error code should be between -20999 and -20000
+                        my_exception EXCEPTION (-20002, 'CUSTOM_EXCEPTION');
+                        BEGIN
+                IF (MONEY=1) THEN
+                    RAISE my_exception;
+                        END IF;
+                v_request_id := UUID_STRING();
+                        RETURN v_request_id;
+                        END;
+            $$;
+        </createProcedure>
+    </changeSet>
+
 
 
 </databaseChangeLog>

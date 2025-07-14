@@ -20,6 +20,17 @@ public class UserRequestController {
     }
 
     @Operation(
+            summary = "Invoke int procedure with string uuid as return",
+            description = """
+                    Goal is to test exception handling between java and snowflake
+                    """)
+    @GetMapping("/call-int-stored-procedure")
+    public ResponseEntity<UUID> callInt(@RequestParam Integer value) {
+        UUID response = userRequestRepository.callInt(value);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
             summary = "Invoke string procedure with string as return",
             description = """
                     
