@@ -7,7 +7,7 @@ import com.snowflake.snowpark_java.Row;
 import com.snowflake.snowpark_java.Session;
 import lombok.extern.slf4j.Slf4j;
 import net.snowflake.client.jdbc.SnowflakeSQLException;
-import org.example.snowflakejava.controller.dto.SourceAndYearDto;
+import org.example.snowflakejava.web.controller.dto.SourceAndYearDto;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
