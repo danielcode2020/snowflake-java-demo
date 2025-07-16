@@ -8,11 +8,15 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 @Configuration
 public class AppConfiguration {
@@ -41,6 +45,26 @@ public class AppConfiguration {
         hikariObj.setLoginTimeout(30000);
         hikariObj.setIdleTimeout(10000);
         return hikariObj;
+    }
+
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource snowflakeDataSource) {
+        LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+        em.setDataSource(snowflakeDataSource);
+        em.setPackagesToScan("org.example.snowflakejava.domain");
+
+        JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        em.setJpaVendorAdapter(vendorAdapter);
+
+        Properties hibernateProperties = new Properties();
+
+        // Custom dialect (from local project) : org.example.snowflakejava.config.SnowflakeDialect
+
+        // org.hibernate.dialect.H2Dialect, org.hibernate.dialect.SQLServerDialect
+        hibernateProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.OracleDialect");
+
+        em.setJpaProperties(hibernateProperties);
+        return em;
     }
 
     @Bean

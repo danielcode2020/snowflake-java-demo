@@ -10,4 +10,6 @@ snowflake:
   schema: YOUR_SCHEMA
 logging:
   level:
-    com.snowflake.snowpark_java: INFO
+    net:
+      snowflake : info
+    sql: debug

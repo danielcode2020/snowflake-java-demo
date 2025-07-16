@@ -1,4 +1,4 @@
-package org.example.snowflakejava.controller.dto;
+package org.example.snowflakejava.web.controller.dto;
 
 public record SourceAndYearDto(
         String year,

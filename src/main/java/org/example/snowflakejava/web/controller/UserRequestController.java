@@ -1,12 +1,15 @@
-package org.example.snowflakejava.controller;
+package org.example.snowflakejava.web.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
-import org.example.snowflakejava.controller.dto.CreateUserRequestDto;
+import org.example.snowflakejava.web.controller.dto.CreateUserRequestDto;
 import org.example.snowflakejava.repository.UserRequestRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
 
 @RestController

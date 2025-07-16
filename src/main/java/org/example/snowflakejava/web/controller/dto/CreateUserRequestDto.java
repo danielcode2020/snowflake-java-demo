@@ -1,4 +1,4 @@
-package org.example.snowflakejava.controller.dto;
+package org.example.snowflakejava.web.controller.dto;
 
 import java.util.List;
 
